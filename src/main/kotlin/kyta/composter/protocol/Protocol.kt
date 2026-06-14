@@ -88,7 +88,7 @@ object Protocol {
         register<ClientboundSetContainerContentPacket>(104, FlowDirection.CLIENTBOUND, ConnectionState.PLAY)
         register<S2CMenuTransactionPacket>(106, FlowDirection.CLIENTBOUND, ConnectionState.PLAY)
 
-        register<PingPacket>(254, FlowDirection.SERVERBOUND, ConnectionState.HANDSHAKING)
+        register<PingPacket>(254, FlowDirection.SERVERBOUND, *allStates)
 
         register<GenericDisconnectPacket>(255, FlowDirection.CLIENTBOUND, *allStates)
         register<GenericDisconnectPacket>(255, FlowDirection.SERVERBOUND, *allStates)

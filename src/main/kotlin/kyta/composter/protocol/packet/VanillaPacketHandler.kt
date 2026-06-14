@@ -29,6 +29,7 @@ class VanillaPacketHandler(
     private val connection: Connection,
 ) : PacketHandler {
     private lateinit var player: Player
+    private val logger = server.logger
 
     override suspend fun handleHandshake(packet: C2SHandshakePacket) {
         connection.sendPacket(S2CHandshakePacket("-"))
@@ -257,8 +258,8 @@ class VanillaPacketHandler(
 
     override suspend fun handlePing(packet: PingPacket) {
         val msg = StringBuilder()
-        println("ping'd!")
-        println(packet)
+        logger.info("ping'd!")
+        logger.info(packet.toString())
 
         when (packet.pingHostString) {
             "BTAPingHost" -> when (packet.payload.toInt()) {
@@ -269,7 +270,7 @@ class VanillaPacketHandler(
             }
         }
 
-        println("sending kick with msg!")
+        logger.info("sending kick with msg!")
         connection.sendPacket(GenericDisconnectPacket(msg.toString()))
     }
 
