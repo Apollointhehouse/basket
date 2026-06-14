@@ -1,7 +1,7 @@
 package kyta.composter.container.menu
 
 import kyta.composter.server.Tickable
-import kyta.composter.protocol.packet.play.ClientboundSetContainerContentPacket
+import kyta.composter.protocol.packet.play.S2CSetContainerContentPacket
 import kyta.composter.world.entity.Player
 
 class MenuSynchronizer(private val player: Player) : Tickable {
@@ -37,7 +37,7 @@ class MenuSynchronizer(private val player: Player) : Tickable {
     }
 
     fun synchronize() {
-        player.connection.sendPacket(ClientboundSetContainerContentPacket(currentMenu.id, currentMenu))
+        player.connection.sendPacket(S2CSetContainerContentPacket(currentMenu.id, currentMenu))
     }
 
     override fun tick(currentTick: Long) {

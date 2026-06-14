@@ -12,7 +12,6 @@ data class PingPacket(
     val protocolVersion: Short = 0,
     val hostname: String? = null,
     val port: Short = 0
-
 ) : ServerboundPacket {
     override suspend fun handle(handler: PacketHandler) = handler.handlePing(this)
 

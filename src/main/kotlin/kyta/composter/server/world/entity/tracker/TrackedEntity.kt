@@ -3,14 +3,14 @@ package kyta.composter.server.world.entity.tracker
 import kyta.composter.server.Tickable
 import kyta.composter.math.Vec3d
 import kyta.composter.protocol.Packet
-import kyta.composter.protocol.packet.play.ClientboundAdjustEntityPositionPacket
-import kyta.composter.protocol.packet.play.ClientboundAdjustEntityPositionRotationPacket
-import kyta.composter.protocol.packet.play.ClientboundSetEntityRotationPacket
+import kyta.composter.protocol.packet.play.S2CAdjustEntityPositionPacket
+import kyta.composter.protocol.packet.play.S2CAdjustEntityPositionRotationPacket
+import kyta.composter.protocol.packet.play.S2CSetEntityRotationPacket
 import kyta.composter.protocol.packet.play.S2CTeleportEntityPacket
 import kyta.composter.world.entity.Entity
 import kotlin.math.abs
 import kotlin.math.max
-import kyta.composter.protocol.packet.play.ClientboundSetEntityDataPacket
+import kyta.composter.protocol.packet.play.S2CSetEntityDataPacket
 import kyta.composter.world.entity.pos
 
 class TrackedEntity(
@@ -22,7 +22,7 @@ class TrackedEntity(
     private var lastYaw = entity.yaw
 
     override fun tick(currentTick: Long) {
-        listener.invoke(ClientboundSetEntityDataPacket(entity.id, entity.synchronizedData)) // todo; temporary
+        listener.invoke(S2CSetEntityDataPacket(entity.id, entity.synchronizedData)) // todo; temporary
 
         val distanceMoved = distanceMoved(entity.pos)
         val headMoved = entity.pitch != lastPitch || entity.yaw != lastYaw
@@ -53,15 +53,15 @@ class TrackedEntity(
 
         if (headMoved) {
             return if (distanceMoved == 0.0) {
-                ClientboundSetEntityRotationPacket(entity.id, entity.yaw, entity.pitch)
+                S2CSetEntityRotationPacket(entity.id, entity.yaw, entity.pitch)
             } else {
-                ClientboundAdjustEntityPositionRotationPacket(entity.id, deltaX, deltaY, deltaZ, entity.yaw, entity.pitch)
+                S2CAdjustEntityPositionRotationPacket(entity.id, deltaX, deltaY, deltaZ, entity.yaw, entity.pitch)
             }
         }
 
         val zeroRelativeMovement = isIrrelevantMovement(deltaX) && isIrrelevantMovement(deltaY) && isIrrelevantMovement(deltaZ)
         if (!zeroRelativeMovement) {
-            return ClientboundAdjustEntityPositionPacket(entity.id, deltaX, deltaY, deltaZ)
+            return S2CAdjustEntityPositionPacket(entity.id, deltaX, deltaY, deltaZ)
         }
 
         return null

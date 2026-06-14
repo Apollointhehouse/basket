@@ -24,7 +24,7 @@ import kyta.composter.world.entity.*
 import kyta.composter.world.getCollidingEntities
 import net.kyori.adventure.text.Component
 
-class VanillaPacketHandler(
+class DefaultPacketHandler(
     private val server: MinecraftServer,
     private val connection: Connection,
 ) : PacketHandler {
@@ -156,7 +156,7 @@ class VanillaPacketHandler(
         handlePlayerFlyingStatus(packet)
     }
 
-    override suspend fun handleAbsolutePlayerPosition(packet: ServerboundSetAbsolutePlayerPositionPacket) {
+    override suspend fun handleAbsolutePlayerPosition(packet: C2SSetAbsolutePlayerPositionPacket) {
         handlePlayerPosition(packet)
         handlePlayerRotation(packet)
     }
@@ -256,7 +256,9 @@ class VanillaPacketHandler(
         player.menuSynchronizer.closeMenu(packet.id)
     }
 
-    override suspend fun handlePing(packet: PingPacket) {
+    override suspend fun handlePing(packet: PingPacket) = withContext(server) {
+        logger.info("handle meeeeee!!!")
+
         val msg = StringBuilder()
         logger.info("ping'd!")
         logger.info(packet.toString())
@@ -270,8 +272,8 @@ class VanillaPacketHandler(
             }
         }
 
-        logger.info("sending kick with msg!")
         connection.sendPacket(GenericDisconnectPacket(msg.toString()))
+        logger.info("sending kick with msg!")
     }
 
     override suspend fun handleDisconnect(packet: GenericDisconnectPacket) {

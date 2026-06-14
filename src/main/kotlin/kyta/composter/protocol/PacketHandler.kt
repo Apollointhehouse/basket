@@ -15,7 +15,7 @@ import kyta.composter.protocol.packet.play.C2SEntityActionPacket
 import kyta.composter.protocol.packet.play.C2SMenuInteractionPacket
 import kyta.composter.protocol.packet.play.C2SPlaceBlockPacket
 import kyta.composter.protocol.packet.play.C2SPlayerDigPacket
-import kyta.composter.protocol.packet.play.ServerboundSetAbsolutePlayerPositionPacket
+import kyta.composter.protocol.packet.play.C2SSetAbsolutePlayerPositionPacket
 import kyta.composter.protocol.packet.play.C2SSetHeldSlotPacket
 
 interface PacketHandler {
@@ -29,7 +29,7 @@ interface PacketHandler {
     suspend fun handlePlayerFlyingStatus(packet: FlyingStatusPacket)
     suspend fun handlePlayerPosition(packet: PositionPacket)
     suspend fun handlePlayerRotation(packet: RotationPacket)
-    suspend fun handleAbsolutePlayerPosition(packet: ServerboundSetAbsolutePlayerPositionPacket)
+    suspend fun handleAbsolutePlayerPosition(packet: C2SSetAbsolutePlayerPositionPacket)
 
     suspend fun handlePlayerDig(packet: C2SPlayerDigPacket)
     suspend fun handleBlockPlacement(packet: C2SPlaceBlockPacket)

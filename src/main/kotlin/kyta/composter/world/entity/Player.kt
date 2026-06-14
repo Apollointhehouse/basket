@@ -9,7 +9,7 @@ import kyta.composter.item.isEmpty
 import kyta.composter.math.grow
 import kyta.composter.network.Connection
 import kyta.composter.protocol.Packet
-import kyta.composter.protocol.packet.play.ClientboundAddPlayerPacket
+import kyta.composter.protocol.packet.play.S2CAddPlayerPacket
 import kyta.composter.protocol.packet.play.S2CChatMessagePacket
 import kyta.composter.protocol.packet.play.S2CChunkDataPacket
 import kyta.composter.protocol.packet.play.S2CChunkOperationPacket
@@ -46,7 +46,7 @@ class Player(
     }
 
     override fun createAddEntityPacket(): Packet {
-        return ClientboundAddPlayerPacket(this)
+        return S2CAddPlayerPacket(this)
     }
 
     override fun tick(currentTick: Long, world: World) {

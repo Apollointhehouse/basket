@@ -4,7 +4,7 @@ import io.netty.channel.ChannelInitializer
 import io.netty.channel.socket.SocketChannel
 import kyta.composter.network.Connection
 import kyta.composter.protocol.ConnectionState
-import kyta.composter.protocol.packet.VanillaPacketHandler
+import kyta.composter.protocol.packet.DefaultPacketHandler
 import kyta.composter.server.MinecraftServer
 import org.slf4j.Logger
 
@@ -14,7 +14,7 @@ class InboundConnectionInitializer(
 ) : ChannelInitializer<SocketChannel>() {
     override fun initChannel(channel: SocketChannel) {
         val connection = Connection(server, channel, ConnectionState.HANDSHAKING)
-        connection.packetHandler = VanillaPacketHandler(server, connection) // todo - net refactor
+        connection.packetHandler = DefaultPacketHandler(server, connection) // todo - net refactor
 
         channel.pipeline()
             .addLast(PacketDecoder(connection, logger))

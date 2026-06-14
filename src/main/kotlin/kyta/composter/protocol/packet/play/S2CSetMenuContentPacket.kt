@@ -6,12 +6,12 @@ import kyta.composter.protocol.Packet
 import kyta.composter.protocol.io.PacketSerializer
 import kyta.composter.protocol.io.WriteBuffer
 
-data class ClientboundSetContainerContentPacket(
+data class S2CSetContainerContentPacket(
     val menuId: Int,
     val menu: Menu,
 ) : Packet {
-    companion object : PacketSerializer<ClientboundSetContainerContentPacket> {
-        override fun serialize(packet: ClientboundSetContainerContentPacket, buffer: WriteBuffer) {
+    companion object : PacketSerializer<S2CSetContainerContentPacket> {
+        override fun serialize(packet: S2CSetContainerContentPacket, buffer: WriteBuffer) {
             buffer.writeByte(packet.menuId)
 
             val slots = packet.menu.slots

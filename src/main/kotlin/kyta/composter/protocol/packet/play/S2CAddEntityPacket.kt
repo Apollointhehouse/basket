@@ -20,7 +20,7 @@ interface AddEntityPacket : Packet {
     val pitch: Float
 }
 
-data class ClientboundAddEntityPacket(
+data class S2CAddEntityPacket(
     override val id: Int,
     val entityType: EntityType,
     override val pos: Vec3d,
@@ -29,8 +29,8 @@ data class ClientboundAddEntityPacket(
 ) : AddEntityPacket {
     constructor(entity: Entity) : this(entity.id, entity.type, entity.pos, entity.yaw, entity.pitch)
 
-    companion object : PacketSerializer<ClientboundAddEntityPacket> {
-        override fun serialize(packet: ClientboundAddEntityPacket, buffer: WriteBuffer) {
+    companion object : PacketSerializer<S2CAddEntityPacket> {
+        override fun serialize(packet: S2CAddEntityPacket, buffer: WriteBuffer) {
             buffer.writeInt(packet.id)
             buffer.writeByte(packet.entityType.networkId)
             buffer.writeAbsoluteInt(packet.pos.x)
@@ -43,7 +43,7 @@ data class ClientboundAddEntityPacket(
     }
 }
 
-data class ClientboundAddDroppedItemPacket(
+data class S2CAddDroppedItemPacket(
     override val id: Int,
     val item: Int,
     val count: Int,
@@ -64,8 +64,8 @@ data class ClientboundAddDroppedItemPacket(
         0F, // todo
     )
 
-    companion object : PacketSerializer<ClientboundAddDroppedItemPacket> {
-        override fun serialize(packet: ClientboundAddDroppedItemPacket, buffer: WriteBuffer) {
+    companion object : PacketSerializer<S2CAddDroppedItemPacket> {
+        override fun serialize(packet: S2CAddDroppedItemPacket, buffer: WriteBuffer) {
             buffer.writeInt(packet.id)
             buffer.writeShort(packet.item)
             buffer.writeByte(packet.count)
@@ -80,7 +80,7 @@ data class ClientboundAddDroppedItemPacket(
     }
 }
 
-data class ClientboundAddPlayerPacket(
+data class S2CAddPlayerPacket(
     override val id: Int,
     val username: String,
     override val pos: Vec3d,
@@ -97,8 +97,8 @@ data class ClientboundAddPlayerPacket(
         player.getHotbarItem(player.selectedHotbarSlot),
     )
 
-    companion object : PacketSerializer<ClientboundAddPlayerPacket> {
-        override fun serialize(packet: ClientboundAddPlayerPacket, buffer: WriteBuffer) {
+    companion object : PacketSerializer<S2CAddPlayerPacket> {
+        override fun serialize(packet: S2CAddPlayerPacket, buffer: WriteBuffer) {
             buffer.writeInt(packet.id)
             buffer.writeString(packet.username)
             buffer.writeAbsoluteInt(packet.pos.x)

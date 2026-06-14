@@ -4,7 +4,7 @@ import kyta.composter.item.ItemStack
 import kyta.composter.item.isEmpty
 import kyta.composter.math.grow
 import kyta.composter.protocol.Packet
-import kyta.composter.protocol.packet.play.ClientboundAddDroppedItemPacket
+import kyta.composter.protocol.packet.play.S2CAddDroppedItemPacket
 import kyta.composter.world.World
 import kyta.composter.world.getCollidingEntities
 
@@ -22,7 +22,7 @@ class ItemEntity : Entity(EntityType.DROPPED_ITEM) {
     var pickUpDelay = 10
 
     override fun createAddEntityPacket(): Packet {
-        return ClientboundAddDroppedItemPacket(this)
+        return S2CAddDroppedItemPacket(this)
     }
 
     fun canBePickedUp(): Boolean {

@@ -17,13 +17,13 @@ interface EntityRotationPacket : Packet {
     val pitch: Float
 }
 
-data class ClientboundSetEntityRotationPacket(
+data class S2CSetEntityRotationPacket(
     private val id: Int,
     override val yaw: Float,
     override val pitch: Float,
 ): EntityRotationPacket {
-    companion object : PacketSerializer<ClientboundSetEntityRotationPacket> {
-        override fun serialize(packet: ClientboundSetEntityRotationPacket, buffer: WriteBuffer) {
+    companion object : PacketSerializer<S2CSetEntityRotationPacket> {
+        override fun serialize(packet: S2CSetEntityRotationPacket, buffer: WriteBuffer) {
             buffer.writeInt(packet.id)
             buffer.writeByte(packet.yaw.asRotation())
             buffer.writeByte(packet.pitch.asRotation())
@@ -31,14 +31,14 @@ data class ClientboundSetEntityRotationPacket(
     }
 }
 
-data class ClientboundAdjustEntityPositionPacket(
+data class S2CAdjustEntityPositionPacket(
     val id: Int,
     override val deltaX: Double,
     override val deltaY: Double,
     override val deltaZ: Double,
 ) : EntityRelativePositionPacket {
-    companion object : PacketSerializer<ClientboundAdjustEntityPositionPacket> {
-        override fun serialize(packet: ClientboundAdjustEntityPositionPacket, buffer: WriteBuffer) {
+    companion object : PacketSerializer<S2CAdjustEntityPositionPacket> {
+        override fun serialize(packet: S2CAdjustEntityPositionPacket, buffer: WriteBuffer) {
             buffer.writeInt(packet.id)
             buffer.writeByte(packet.deltaX.asAbsoluteInt())
             buffer.writeByte(packet.deltaY.asAbsoluteInt())
@@ -47,7 +47,7 @@ data class ClientboundAdjustEntityPositionPacket(
     }
 }
 
-data class ClientboundAdjustEntityPositionRotationPacket(
+data class S2CAdjustEntityPositionRotationPacket(
     val id: Int,
     override val deltaX: Double,
     override val deltaY: Double,
@@ -55,8 +55,8 @@ data class ClientboundAdjustEntityPositionRotationPacket(
     override val yaw: Float,
     override val pitch: Float,
 ) : EntityRelativePositionPacket, EntityRotationPacket {
-    companion object : PacketSerializer<ClientboundAdjustEntityPositionRotationPacket> {
-        override fun serialize(packet: ClientboundAdjustEntityPositionRotationPacket, buffer: WriteBuffer) {
+    companion object : PacketSerializer<S2CAdjustEntityPositionRotationPacket> {
+        override fun serialize(packet: S2CAdjustEntityPositionRotationPacket, buffer: WriteBuffer) {
             buffer.writeInt(packet.id)
             buffer.writeByte(packet.deltaX.asAbsoluteInt())
             buffer.writeByte(packet.deltaY.asAbsoluteInt())

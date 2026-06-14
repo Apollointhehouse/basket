@@ -3,7 +3,7 @@ package kyta.composter.world.entity
 import kyta.composter.math.AABB
 import kyta.composter.math.Vec3d
 import kyta.composter.protocol.Packet
-import kyta.composter.protocol.packet.play.ClientboundAddEntityPacket
+import kyta.composter.protocol.packet.play.S2CAddEntityPacket
 import kyta.composter.server.world.entity.data.SynchronizedEntityData
 import kyta.composter.world.BlockPos
 import kyta.composter.world.GlobalPos
@@ -42,7 +42,7 @@ open class Entity(val type: EntityType) {
     }
 
     open fun createAddEntityPacket(): Packet {
-        return ClientboundAddEntityPacket(this)
+        return S2CAddEntityPacket(this)
     }
 
     open fun tick(currentTick: Long, world: World) {

@@ -12,7 +12,7 @@ import kyta.composter.item.mergeInto
 import kyta.composter.item.shrink
 import kyta.composter.item.split
 import kyta.composter.item.withCount
-import kyta.composter.protocol.packet.play.ClientboundSetContainerContentPacket
+import kyta.composter.protocol.packet.play.S2CSetContainerContentPacket
 import kyta.composter.protocol.packet.play.C2SMenuInteractionPacket
 import kyta.composter.world.entity.Player
 import kyta.composter.world.entity.drop
@@ -170,7 +170,7 @@ abstract class BasicMenu(override val viewer: Player) : Menu {
          * send menu updates if any slot is marked dirty.
          */
         if (slots.any { it.backingContainer.dirty }) {
-            viewer.connection.sendPacket(ClientboundSetContainerContentPacket(id, this))
+            viewer.connection.sendPacket(S2CSetContainerContentPacket(id, this))
             slots.forEach { it.backingContainer.dirty = false }
         }
     }

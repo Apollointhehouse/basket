@@ -6,11 +6,11 @@ import kyta.composter.protocol.io.WriteBuffer
 import kyta.composter.server.world.entity.data.DataType
 import kyta.composter.server.world.entity.data.SynchronizedEntityData
 
-class ClientboundSetEntityDataPacket(val id: Int, val data: SynchronizedEntityData) : Packet {
-    companion object : PacketSerializer<ClientboundSetEntityDataPacket> {
+class S2CSetEntityDataPacket(val id: Int, val data: SynchronizedEntityData) : Packet {
+    companion object : PacketSerializer<S2CSetEntityDataPacket> {
         private const val TERMINATOR = Byte.MAX_VALUE
 
-        override fun serialize(packet: ClientboundSetEntityDataPacket, buffer: WriteBuffer) {
+        override fun serialize(packet: S2CSetEntityDataPacket, buffer: WriteBuffer) {
             buffer.writeInt(packet.id)
 
             for ((descriptor, value) in packet.data.values) {
