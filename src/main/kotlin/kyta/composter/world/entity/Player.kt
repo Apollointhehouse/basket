@@ -10,10 +10,10 @@ import kyta.composter.math.grow
 import kyta.composter.network.Connection
 import kyta.composter.protocol.Packet
 import kyta.composter.protocol.packet.play.ClientboundAddPlayerPacket
-import kyta.composter.protocol.packet.play.ClientboundChatMessagePacket
-import kyta.composter.protocol.packet.play.ClientboundChunkDataPacket
-import kyta.composter.protocol.packet.play.ClientboundChunkOperationPacket
-import kyta.composter.protocol.packet.play.ClientboundCollectDroppedItemPacket
+import kyta.composter.protocol.packet.play.S2CChatMessagePacket
+import kyta.composter.protocol.packet.play.S2CChunkDataPacket
+import kyta.composter.protocol.packet.play.S2CChunkOperationPacket
+import kyta.composter.protocol.packet.play.S2CCollectDroppedItemPacket
 import kyta.composter.protocol.packet.play.GenericPlayerActionPacket
 import kyta.composter.server.world.entity.tracker.EntityTracker
 import kyta.composter.world.ChunkPos
@@ -85,8 +85,8 @@ class Player(
                  * side, don't send it to the client yet.
                  */
                 val chunk = world.chunks.getLoadedChunk(pos) ?: continue
-                connection.sendPacket(ClientboundChunkOperationPacket(pos, ClientboundChunkOperationPacket.Mode.LOAD))
-                connection.sendPacket(ClientboundChunkDataPacket(pos, chunk))
+                connection.sendPacket(S2CChunkOperationPacket(pos, S2CChunkOperationPacket.Mode.LOAD))
+                connection.sendPacket(S2CChunkDataPacket(pos, chunk))
                 visibleChunks.add(pos)
             }
         }
@@ -96,7 +96,7 @@ class Player(
          */
         pendingUnload.forEach(Consumer { pos: ChunkPos ->
             visibleChunks.remove(pos)
-            connection.sendPacket(ClientboundChunkOperationPacket(pos, ClientboundChunkOperationPacket.Mode.UNLOAD))
+            connection.sendPacket(S2CChunkOperationPacket(pos, S2CChunkOperationPacket.Mode.UNLOAD))
         })
     }
 
@@ -114,7 +114,7 @@ class Player(
              * of the stored stack has been picked up.
              */
             if (entity.itemStack.isEmpty) {
-                entityTracker.broadcast(ClientboundCollectDroppedItemPacket(entity.id, id), includeSelf = true)
+                entityTracker.broadcast(S2CCollectDroppedItemPacket(entity.id, id), includeSelf = true)
             }
         }
     }
@@ -130,7 +130,7 @@ var Player.heldItem: ItemStack
     set(value) = inventory.setItem(selectedHotbarSlot, value)
 
 fun Player.sendMessage(message: Component) {
-    connection.sendPacket(ClientboundChatMessagePacket(message))
+    connection.sendPacket(S2CChatMessagePacket(message))
 }
 
 fun Player.getHotbarItem(index: Int): ItemStack {

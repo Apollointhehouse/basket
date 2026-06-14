@@ -13,7 +13,7 @@ import kyta.composter.item.shrink
 import kyta.composter.item.split
 import kyta.composter.item.withCount
 import kyta.composter.protocol.packet.play.ClientboundSetContainerContentPacket
-import kyta.composter.protocol.packet.play.ServerboundMenuInteractionPacket
+import kyta.composter.protocol.packet.play.C2SMenuInteractionPacket
 import kyta.composter.world.entity.Player
 import kyta.composter.world.entity.drop
 
@@ -26,7 +26,7 @@ interface Menu : Tickable {
     fun getSlot(networkId: Int): Slot?
     fun addSlot(slot: Slot)
 
-    fun interact(player: Player, packet: ServerboundMenuInteractionPacket)
+    fun interact(player: Player, packet: C2SMenuInteractionPacket)
     fun incrementState(): Int
 }
 
@@ -113,7 +113,7 @@ abstract class BasicMenu(override val viewer: Player) : Menu {
         _slots[slot.networkIndex] = slot
     }
 
-    override fun interact(player: Player, packet: ServerboundMenuInteractionPacket) {
+    override fun interact(player: Player, packet: C2SMenuInteractionPacket) {
         if (packet.slot == -1) {
             /**
              * special case: drop the currently held cursor item.

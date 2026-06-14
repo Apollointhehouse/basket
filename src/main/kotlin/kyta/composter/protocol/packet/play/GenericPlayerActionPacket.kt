@@ -1,10 +1,10 @@
 package kyta.composter.protocol.packet.play
 
 import kyta.composter.protocol.PacketHandler
-import kyta.composter.protocol.PacketSerializer
-import kyta.composter.protocol.ReadBuffer
+import kyta.composter.protocol.io.PacketSerializer
+import kyta.composter.protocol.io.ReadBuffer
 import kyta.composter.protocol.ServerboundPacket
-import kyta.composter.protocol.WriteBuffer
+import kyta.composter.protocol.io.WriteBuffer
 
 data class GenericPlayerActionPacket(
     val id: Int,

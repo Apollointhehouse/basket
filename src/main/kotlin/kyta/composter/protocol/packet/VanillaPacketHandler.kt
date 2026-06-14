@@ -1,32 +1,16 @@
 package kyta.composter.protocol.packet
 
-import kyta.composter.item.Item
-import kyta.composter.item.ItemStack
-import kyta.composter.item.isEmpty
-import kyta.composter.item.shrink
-import kyta.composter.item.split
+import kyta.composter.item.*
 import kyta.composter.network.Connection
 import kyta.composter.protocol.ConnectionState
+import kyta.composter.protocol.Global
 import kyta.composter.protocol.PacketHandler
-import kyta.composter.protocol.packet.handshaking.ClientboundHandshakePacket
-import kyta.composter.protocol.packet.handshaking.ServerboundHandshakePacket
-import kyta.composter.protocol.packet.login.ClientboundLoginPacket
-import kyta.composter.protocol.packet.login.ServerboundLoginPacket
-import kyta.composter.protocol.packet.play.ClientboundMenuTransactionPacket
-import kyta.composter.protocol.packet.play.ClientboundSetAbsolutePlayerPositionPacket
-import kyta.composter.protocol.packet.play.ClientboundUpdateBlockPacket
-import kyta.composter.protocol.packet.play.FlyingStatusPacket
-import kyta.composter.protocol.packet.play.GenericPlayerActionPacket
-import kyta.composter.protocol.packet.play.PositionPacket
-import kyta.composter.protocol.packet.play.RotationPacket
-import kyta.composter.protocol.packet.play.ServerboundChatMessagePacket
-import kyta.composter.protocol.packet.play.ServerboundCloseMenuPacket
-import kyta.composter.protocol.packet.play.ServerboundEntityActionPacket
-import kyta.composter.protocol.packet.play.ServerboundMenuInteractionPacket
-import kyta.composter.protocol.packet.play.ServerboundPlaceBlockPacket
-import kyta.composter.protocol.packet.play.ServerboundPlayerDigPacket
-import kyta.composter.protocol.packet.play.ServerboundSetAbsolutePlayerPositionPacket
-import kyta.composter.protocol.packet.play.ServerboundSetHeldSlotPacket
+import kyta.composter.protocol.packet.handshaking.C2SHandshakePacket
+import kyta.composter.protocol.packet.handshaking.S2CHandshakePacket
+import kyta.composter.protocol.packet.login.C2SLoginPacket
+import kyta.composter.protocol.packet.login.S2CLoginPacket
+import kyta.composter.protocol.packet.ping.PingPacket
+import kyta.composter.protocol.packet.play.*
 import kyta.composter.server.MinecraftServer
 import kyta.composter.server.withContext
 import kyta.composter.world.BlockPos
@@ -36,12 +20,7 @@ import kyta.composter.world.block.BlockState
 import kyta.composter.world.block.STONE
 import kyta.composter.world.block.isAir
 import kyta.composter.world.breakBlock
-import kyta.composter.world.entity.Player
-import kyta.composter.world.entity.crouching
-import kyta.composter.world.entity.drop
-import kyta.composter.world.entity.heldItem
-import kyta.composter.world.entity.pos
-import kyta.composter.world.entity.swingArm
+import kyta.composter.world.entity.*
 import kyta.composter.world.getCollidingEntities
 import net.kyori.adventure.text.Component
 
@@ -51,15 +30,15 @@ class VanillaPacketHandler(
 ) : PacketHandler {
     private lateinit var player: Player
 
-    override suspend fun handleHandshake(packet: ServerboundHandshakePacket) {
-        connection.sendPacket(ClientboundHandshakePacket("-"))
+    override suspend fun handleHandshake(packet: C2SHandshakePacket) {
+        connection.sendPacket(S2CHandshakePacket("-"))
         connection.state = ConnectionState.LOGIN
     }
 
     override suspend fun handleKeepAlive(packet: GenericKeepAlivePacket) {
     }
 
-    override suspend fun handleLogin(packet: ServerboundLoginPacket) {
+    override suspend fun handleLogin(packet: C2SLoginPacket) {
         if (connection.state != ConnectionState.LOGIN) {
             return connection.disconnect("Invalid connection state (${connection.state.name})")
         }
@@ -79,7 +58,7 @@ class VanillaPacketHandler(
 
             /* acknowledge login, advance connection status */
             connection.sendPacket(
-                ClientboundLoginPacket(
+                S2CLoginPacket(
                     player.id,
                     "composter",
                     player.world.properties.seed,
@@ -94,16 +73,16 @@ class VanillaPacketHandler(
         }
     }
 
-    override suspend fun handleChatMessage(packet: ServerboundChatMessagePacket) {
+    override suspend fun handleChatMessage(packet: C2SChatMessagePacket) {
         if (packet.message.isBlank()) return
         connection.player.inventory.insert(ItemStack(Item(STONE.networkId), 64, 0))
         server.playerList.broadcastMessage(Component.text("<${connection.player.username}> ${packet.message}"))
     }
 
-    override suspend fun handleEntityAction(packet: ServerboundEntityActionPacket) = withContext(server) {
+    override suspend fun handleEntityAction(packet: C2SEntityActionPacket) = withContext(server) {
         when (packet.action) {
-            ServerboundEntityActionPacket.Action.START_CROUCHING -> player.crouching = true
-            ServerboundEntityActionPacket.Action.STOP_CROUCHING -> player.crouching = false
+            C2SEntityActionPacket.Action.START_CROUCHING -> player.crouching = true
+            C2SEntityActionPacket.Action.STOP_CROUCHING -> player.crouching = false
 
             else -> throw UnsupportedOperationException()
         }
@@ -138,7 +117,7 @@ class VanillaPacketHandler(
 
         if (!player.world.chunks.isLoaded(chunkPos)) {
             connection.sendPacket(
-                ClientboundSetAbsolutePlayerPositionPacket(
+                S2CSetAbsolutePlayerPositionPacket(
                     player.pos,
                     player.stance,
                     player.yaw,
@@ -181,10 +160,10 @@ class VanillaPacketHandler(
         handlePlayerRotation(packet)
     }
 
-    override suspend fun handlePlayerDig(packet: ServerboundPlayerDigPacket) = withContext(server) {
+    override suspend fun handlePlayerDig(packet: C2SPlayerDigPacket) = withContext(server) {
         when (packet.action) {
-            ServerboundPlayerDigPacket.Action.START -> {}
-            ServerboundPlayerDigPacket.Action.FINISH -> {
+            C2SPlayerDigPacket.Action.START -> {}
+            C2SPlayerDigPacket.Action.FINISH -> {
                 /**
                  * todo;
                  * - perform range checks for block breaking (4 block radius?)
@@ -197,7 +176,7 @@ class VanillaPacketHandler(
              * Drop a single count out of the item stack the
              * player is currently holding in their hand.
              */
-            ServerboundPlayerDigPacket.Action.DROP_ITEM -> {
+            C2SPlayerDigPacket.Action.DROP_ITEM -> {
                 if (player.heldItem.isEmpty) return@withContext
 
                 val (remainder, singleCount) = player.heldItem.split(1)
@@ -207,7 +186,7 @@ class VanillaPacketHandler(
         }
     }
 
-    override suspend fun handleBlockPlacement(packet: ServerboundPlaceBlockPacket) = withContext(server) {
+    override suspend fun handleBlockPlacement(packet: C2SPlaceBlockPacket) = withContext(server) {
         if (!packet.isBlockPlacement()) {
             return@withContext
         }
@@ -224,7 +203,7 @@ class VanillaPacketHandler(
          */
         val currentState = player.world.getBlock(target)
         if (!currentState.isAir() || player.world.getCollidingEntities(target.boundingBox).any()) {
-            player.connection.sendPacket(ClientboundUpdateBlockPacket(target, currentState))
+            player.connection.sendPacket(S2CUpdateBlockPacket(target, currentState))
             return@withContext
         }
 
@@ -244,11 +223,11 @@ class VanillaPacketHandler(
         }
     }
 
-    override suspend fun handleHeldSlotChange(packet: ServerboundSetHeldSlotPacket) = withContext(server) {
+    override suspend fun handleHeldSlotChange(packet: C2SSetHeldSlotPacket) = withContext(server) {
         connection.player.selectedHotbarSlot = packet.slot
     }
 
-    override suspend fun handleMenuInteraction(packet: ServerboundMenuInteractionPacket) = withContext(server) {
+    override suspend fun handleMenuInteraction(packet: C2SMenuInteractionPacket) = withContext(server) {
         val openMenu = player.menuSynchronizer.currentMenu
 
         if (packet.windowId != openMenu.id) {
@@ -258,22 +237,40 @@ class VanillaPacketHandler(
         val state = openMenu.incrementState()
         if (state != packet.stateId) {
             player.world.server.logger.warn("menu state mismatch for ${player.username} ($state, ${packet.stateId})")
-            connection.sendPacket(ClientboundMenuTransactionPacket(packet.windowId, packet.stateId, false))
+            connection.sendPacket(S2CMenuTransactionPacket(packet.windowId, packet.stateId, false))
             player.menuSynchronizer.synchronize()
             return@withContext
         }
 
         try {
             openMenu.interact(player, packet)
-            connection.sendPacket(ClientboundMenuTransactionPacket(packet.windowId, packet.stateId, true))
+            connection.sendPacket(S2CMenuTransactionPacket(packet.windowId, packet.stateId, true))
         } catch (x: Throwable) {
-            connection.sendPacket(ClientboundMenuTransactionPacket(packet.windowId, packet.stateId, false))
+            connection.sendPacket(S2CMenuTransactionPacket(packet.windowId, packet.stateId, false))
             player.menuSynchronizer.synchronize()
         }
     }
 
-    override suspend fun handleMenuClose(packet: ServerboundCloseMenuPacket) = withContext(server) {
+    override suspend fun handleMenuClose(packet: C2SCloseMenuPacket) = withContext(server) {
         player.menuSynchronizer.closeMenu(packet.id)
+    }
+
+    override suspend fun handlePing(packet: PingPacket) {
+        val msg = StringBuilder()
+        println("ping'd!")
+        println(packet)
+
+        when (packet.pingHostString) {
+            "BTAPingHost" -> when (packet.payload.toInt()) {
+                else -> msg.append("§1").append('\u0000').append(32786).append('\u0000').append(Global.VERSION)
+                    .append('\u0000').append("Test").append('\u0000')
+                    .append(server.playerList.onlinePlayers.size).append('\u0000')
+                    .append(20)
+            }
+        }
+
+        println("sending kick with msg!")
+        connection.sendPacket(GenericDisconnectPacket(msg.toString()))
     }
 
     override suspend fun handleDisconnect(packet: GenericDisconnectPacket) {

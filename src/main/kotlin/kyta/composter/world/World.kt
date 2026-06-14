@@ -4,11 +4,10 @@ import kyta.composter.item.Item
 import kyta.composter.item.ItemStack
 import kyta.composter.math.AABB
 import kyta.composter.math.Vec3d
-import kyta.composter.math.intersects
 import kyta.composter.math.overlaps
 import kyta.composter.protocol.Packet
-import kyta.composter.protocol.packet.play.ClientboundSetTimePacket
-import kyta.composter.protocol.packet.play.ClientboundUpdateBlockPacket
+import kyta.composter.protocol.packet.play.S2CSetTimePacket
+import kyta.composter.protocol.packet.play.S2CUpdateBlockPacket
 import kyta.composter.server.MinecraftServer
 import kyta.composter.server.Tickable
 import kyta.composter.world.block.AIR
@@ -52,7 +51,7 @@ class World(
 
         if (chunk != null) {
             chunk.setBlock(pos, state)
-            broadcast(pos, ClientboundUpdateBlockPacket(pos, state))
+            broadcast(pos, S2CUpdateBlockPacket(pos, state))
         }
     }
 
@@ -72,7 +71,7 @@ class World(
 
         /* send time updates to clients */
         if (currentTick % 20 == 0L) {
-            val packet = ClientboundSetTimePacket(time)
+            val packet = S2CSetTimePacket(time)
             server.playerList
                 .filter { it.world === this }
                 .forEach { it.connection.sendPacket(packet) }

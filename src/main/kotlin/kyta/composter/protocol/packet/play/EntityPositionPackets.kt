@@ -3,8 +3,8 @@ package kyta.composter.protocol.packet.play
 import kyta.composter.protocol.asAbsoluteInt
 import kyta.composter.protocol.asRotation
 import kyta.composter.protocol.Packet
-import kyta.composter.protocol.PacketSerializer
-import kyta.composter.protocol.WriteBuffer
+import kyta.composter.protocol.io.PacketSerializer
+import kyta.composter.protocol.io.WriteBuffer
 
 interface EntityRelativePositionPacket : Packet {
     val deltaX: Double

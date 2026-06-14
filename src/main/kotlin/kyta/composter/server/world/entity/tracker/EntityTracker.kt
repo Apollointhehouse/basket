@@ -3,7 +3,7 @@ package kyta.composter.server.world.entity.tracker
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
 import kyta.composter.server.Tickable
 import kyta.composter.protocol.Packet
-import kyta.composter.protocol.packet.play.ClientboundRemoveEntityPacket
+import kyta.composter.protocol.packet.play.S2CRemoveEntityPacket
 import kyta.composter.protocol.packet.play.ClientboundSetEntityDataPacket
 import org.slf4j.LoggerFactory
 import kyta.composter.world.entity.Entity
@@ -61,7 +61,7 @@ class EntityTracker(private val player: Player) : Tickable {
     }
 
     private fun untrackEntity(entity: Entity) {
-        player.connection.sendPacket(ClientboundRemoveEntityPacket(entity))
+        player.connection.sendPacket(S2CRemoveEntityPacket(entity))
         logger.info("{} untracked {} (entity #{}).", player.username, entity.javaClass.getSimpleName(), entity.id)
     }
 }

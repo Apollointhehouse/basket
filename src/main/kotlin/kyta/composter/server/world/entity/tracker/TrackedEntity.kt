@@ -6,7 +6,7 @@ import kyta.composter.protocol.Packet
 import kyta.composter.protocol.packet.play.ClientboundAdjustEntityPositionPacket
 import kyta.composter.protocol.packet.play.ClientboundAdjustEntityPositionRotationPacket
 import kyta.composter.protocol.packet.play.ClientboundSetEntityRotationPacket
-import kyta.composter.protocol.packet.play.ClientboundTeleportEntityPacket
+import kyta.composter.protocol.packet.play.S2CTeleportEntityPacket
 import kyta.composter.world.entity.Entity
 import kotlin.math.abs
 import kotlin.math.max
@@ -48,7 +48,7 @@ class TrackedEntity(
         val deltaZ = entity.z - oldPos.z
 
         if (fullUpdate || distanceMoved > MAX_RELATIVE_MOVE) {
-            return ClientboundTeleportEntityPacket(entity.id, entity.pos, entity.yaw, entity.pitch)
+            return S2CTeleportEntityPacket(entity.id, entity.pos, entity.yaw, entity.pitch)
         }
 
         if (headMoved) {

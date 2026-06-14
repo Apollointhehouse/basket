@@ -6,7 +6,7 @@ import io.netty.handler.codec.ReplayingDecoder
 import kyta.composter.protocol.ServerboundPacket
 import kyta.composter.network.Connection
 import kyta.composter.protocol.FlowDirection
-import kyta.composter.protocol.MinecraftPacketBuffer
+import kyta.composter.protocol.io.MinecraftPacketBuffer
 import org.slf4j.Logger
 
 class PacketDecoder(

@@ -4,7 +4,7 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.MessageToMessageEncoder
 import kyta.composter.network.Connection
 import kyta.composter.protocol.FlowDirection
-import kyta.composter.protocol.MinecraftPacketBuffer
+import kyta.composter.protocol.io.MinecraftPacketBuffer
 import kyta.composter.protocol.Packet
 import org.slf4j.Logger
 

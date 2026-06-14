@@ -2,8 +2,8 @@ package kyta.composter.protocol.packet.play
 
 import kyta.composter.math.Vec3d
 import kyta.composter.protocol.PacketHandler
-import kyta.composter.protocol.PacketSerializer
-import kyta.composter.protocol.ReadBuffer
+import kyta.composter.protocol.io.PacketSerializer
+import kyta.composter.protocol.io.ReadBuffer
 import kyta.composter.protocol.ServerboundPacket
 
 interface FlyingStatusPacket {

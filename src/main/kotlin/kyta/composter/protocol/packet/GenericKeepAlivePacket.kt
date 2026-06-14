@@ -1,8 +1,8 @@
 package kyta.composter.protocol.packet
 
 import kyta.composter.protocol.PacketHandler
-import kyta.composter.protocol.PacketSerializer
-import kyta.composter.protocol.ReadBuffer
+import kyta.composter.protocol.io.PacketSerializer
+import kyta.composter.protocol.io.ReadBuffer
 import kyta.composter.protocol.ServerboundPacket
 
 object GenericKeepAlivePacket : ServerboundPacket, PacketSerializer<GenericKeepAlivePacket> {

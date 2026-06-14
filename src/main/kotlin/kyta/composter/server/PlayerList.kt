@@ -3,9 +3,9 @@ package kyta.composter.server
 import kyta.composter.math.Vec3d
 import kyta.composter.protocol.Packet
 import kyta.composter.protocol.packet.GenericKeepAlivePacket
-import kyta.composter.protocol.packet.play.ClientboundChatMessagePacket
-import kyta.composter.protocol.packet.play.ClientboundSetAbsolutePlayerPositionPacket
-import kyta.composter.protocol.packet.play.ClientboundSetSpawnPacket
+import kyta.composter.protocol.packet.play.S2CChatMessagePacket
+import kyta.composter.protocol.packet.play.S2CSetAbsolutePlayerPositionPacket
+import kyta.composter.protocol.packet.play.S2CSetSpawnPacket
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -15,7 +15,8 @@ import kyta.composter.world.entity.pos
 import java.util.*
 
 class PlayerList(private val server: MinecraftServer) : Tickable, Iterable<Player> {
-    private val onlinePlayers = mutableMapOf<String, Player>()
+    val onlinePlayers: Map<String, Player>
+        field = mutableMapOf<String, Player>()
     private val chatLogger = LoggerFactory.getLogger("chat")
 
     fun getPlayer(username: String): Player? {
@@ -23,7 +24,7 @@ class PlayerList(private val server: MinecraftServer) : Tickable, Iterable<Playe
     }
 
     fun broadcastMessage(message: Component) {
-        broadcastPacket(ClientboundChatMessagePacket(message))
+        broadcastPacket(S2CChatMessagePacket(message))
         chatLogger.info(PlainTextComponentSerializer.plainText().serialize(message))
     }
 
@@ -41,12 +42,12 @@ class PlayerList(private val server: MinecraftServer) : Tickable, Iterable<Playe
 
         player.updateVisibleChunks()
         player.menuSynchronizer.synchronize()
-        player.connection.sendPacket(ClientboundSetSpawnPacket(worldSpawn))
+        player.connection.sendPacket(S2CSetSpawnPacket(worldSpawn))
         player.world.entities.add(player)
 
         /* send the player's spawning position */
         player.connection.sendPacket(
-            ClientboundSetAbsolutePlayerPositionPacket(
+            S2CSetAbsolutePlayerPositionPacket(
                 player.pos,
                 player.stance,
                 player.yaw,
